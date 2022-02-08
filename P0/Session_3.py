@@ -59,6 +59,7 @@ seq_list = f.readlines()
 
 for e in seq_list:
     count_dict = count_dna_bases(e[:-1])
+    print("Total length:", len(e) - 1)
     for k in count_dict:
         print(k + ":", count_dict[k])
     print()
