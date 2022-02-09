@@ -7,4 +7,4 @@ for f in files:
     seq = Path(f).read_text()
     bases = seq0.seq_count(seq)
 
-    print("Gene", f.split("/")[2] + ":", bases)
+    print("Gene", f.split("/")[2] + ":", "Most frequent Base:", seq0.most_common_base(seq))
