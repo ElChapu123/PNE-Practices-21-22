@@ -82,3 +82,14 @@ class Seq:
         seq = seq.replace("\n", "")
 
         self.strbases = seq
+
+    def most_common_base(self):
+        count_dict = self.bases()
+        most_common = ""
+        for b in count_dict:
+            if most_common == "":
+                most_common = b
+            elif int(count_dict[b]) > count_dict[most_common]:
+                most_common = b
+
+        return most_common

@@ -1,6 +1,6 @@
 import seq0
 from pathlib import Path
-print("-----| Exercise 5 |-----")
+print("-----| Exercise 8 |-----")
 files = ["./DNA_SEQ/U5", "./DNA_SEQ/ADA", "./DNA_SEQ/FRAT1", "./DNA_SEQ/FXN", "./DNA_SEQ/U5"]
 
 for f in files:
