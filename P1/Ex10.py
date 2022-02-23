@@ -7,4 +7,4 @@ files = ["../P0/DNA_SEQ/U5", "../P0/DNA_SEQ/ADA", "../P0/DNA_SEQ/FRAT1", "../P0/
 for f in files:
     s1 = Seq()
     seq = s1.read_fasta(f)
-    print("Gene", f.split("/")[3] + ":", "Most frequent Base:", s1.most_common_base())
+    print("Gene", f.split("/")[3] + ":", "Most frequent Base:", s1.most_common_base() )
