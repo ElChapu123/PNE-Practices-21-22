@@ -5,7 +5,7 @@ import colorama
 # Write here the correct parameter for connecting to the
 # Teacher's server
 PORT = 21000
-IP = "212.128.253.64"
+IP = "localhost"
 
 
 # First, create the socket
