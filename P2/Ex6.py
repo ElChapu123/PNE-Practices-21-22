@@ -4,8 +4,8 @@ from seq1 import Seq
 print(f"-----| Practice 2, Exercise 1 |------")
 
 IP = "127.0.0.1"
-PORT = 21000
-PORT2 = 20000
+PORT = 22002
+PORT2 = 22001
 
 s = Seq()
 f = "../P0/DNA_SEQ/FRAT1"
@@ -35,6 +35,7 @@ for k in frag_dict:
     print(f"Fragment {k}: {frag_dict[k]}")
 
 c.talk(f"Sending {gene} Gene to the server, in fragments of 10 bases")
+c2.talk(f"Sending {gene} Gene to the server, in fragments of 10 bases")
 
 for k in frag_dict:
     if k % 2 != 0:

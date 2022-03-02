@@ -1,7 +1,7 @@
 import socket
-
+from colorama import Fore
 # Configure the Server's IP and PORT
-PORT = 21000
+PORT = 22002
 IP = "127.0.0.1"
 MAX_OPEN_REQUESTS = 5
 
@@ -18,18 +18,18 @@ try:
 
     while True:
         # accept connections from outside
-        print("Waiting for connections at {}, {} ".format(IP, PORT))
+        print(Fore.WHITE + "Waiting for connections at {}, {} ".format(IP, PORT))
         (clientsocket, address) = serversocket.accept()
 
         # Another connection!e
         number_con += 1
 
         # Print the conection number
-        print("CONNECTION: {}. From the IP: {}".format(number_con, address))
+        print(Fore.WHITE + "CONNECTION: {}. From the IP: {}".format(number_con, address))
 
         # Read the message from the client, if any
         msg = clientsocket.recv(2048).decode("utf-8")
-        print("Message from client: {}".format(msg))
+        print(Fore.WHITE + "Message from client: {}".format(Fore.GREEN + msg))
 
         # Send the messag
         message = "Hello from the teacher's server "
