@@ -3,8 +3,8 @@ from seq1 import Seq
 
 print(f"-----| Practice 2, Exercise 1 |------")
 
-IP = "10.3.41.189"
-PORT = 20000
+IP = "172.17.0.1"
+PORT = 21000
 
 s = Seq()
 f = "../P0/DNA_SEQ/FRAT1"

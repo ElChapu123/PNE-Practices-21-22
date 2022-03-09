@@ -32,6 +32,7 @@ class Seq:
             return 0
         else:
             return len(self.strbases)
+
     def count_base(self, base):
         count = 0
         if self.strbases == "NULL" or self.strbases == "ERROR":
@@ -93,3 +94,11 @@ class Seq:
                 most_common = b
 
         return most_common
+
+    def base_percentage(self):
+        base_dict = self.bases()
+        t_lenght = len(self.strbases)
+        for k in base_dict:
+            base_dict[k] = round(base_dict[k] / t_lenght * 100, 2)
+
+        return base_dict
