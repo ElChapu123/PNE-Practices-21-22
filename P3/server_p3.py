@@ -41,12 +41,14 @@ while True:
         arg = msg_split[1]
 
     print(Fore.GREEN + f"{cmd}" +  Fore.LIGHTWHITE_EX)
-
     if cmd == "PING":
         response = "OK!\n"
 
     elif cmd == "GET":
-        response = seq_list[int(arg)] + "\n"
+        try:
+            response = seq_list[int(arg)] + "\n"
+        except IndexError:
+            response = "Please enter a value between 0 and 4\n"
 
     elif cmd == "INFO":
         new_seq = Seq(arg)
@@ -67,7 +69,6 @@ while True:
 
     elif cmd == "REV":
         response = Seq(arg).seq_reverse() + "\n"
-
     elif cmd == "GENE":
         filename = "../P0/DNA_SEQ/" + arg
         print(filename)
