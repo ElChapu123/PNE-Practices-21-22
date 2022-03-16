@@ -31,19 +31,37 @@ def process_client(s):
     # Body (content to send)
 
     # This new contents are written in HTML language
-    body = """
-    <!DOCTYPE html>
-    <html lang="en" dir="ltr">
-      <head>
-        <meta charset="utf-8">
-        <title>Green server</title>
-      </head>
-      <body style="background-color: lightgreen;">
-        <h1>GREEN SERVER</h1>
-        <p>I am the Green Server! :-)</p>
-      </body>
-    </html>
-    """
+
+    route = req_line.split(" ")[1]
+    print("ROUTE", route)
+    if route == "/":
+        body = """
+        <!DOCTYPE html>
+        <html lang="en" dir="ltr">
+          <head>
+            <meta charset="utf-8">
+            <title>Green server</title>
+          </head>
+          <body style="background-color: lightgreen;">
+            <h1>GREEN SERVER</h1>
+            <p>I am the Green Server! :-)</p>
+          </body>
+        </html>
+        """
+    elif route == "/goodbye":
+        body = """
+                <!DOCTYPE html>
+                <html lang="en" dir="ltr">
+                  <head>
+                    <meta charset="utf-8">
+                    <title>Red server</title>
+                  </head>
+                  <body style="background-color: red;">
+                    <h1>RED SERVER</h1>
+                    <p>I am the red Server! :-), goodbye!</p>
+                  </body>
+                </html>
+                """
     # -- Status line: We respond that everything is ok (200 code)
     status_line = "HTTP/1.1 200 OK\n"
 
