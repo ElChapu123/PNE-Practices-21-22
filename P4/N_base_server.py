@@ -46,7 +46,7 @@ def process_client(s):
         try:
             body = Path("./html/" + filename + ".html").read_text()
         except FileNotFoundError:
-            body = Path("./html/error.html").read_text()
+            body = Path("html/error.html").read_text()
 
     # -- Status line: We respond that everything is ok (200 code)
     status_line = "HTTP/1.1 200 OK\n"
