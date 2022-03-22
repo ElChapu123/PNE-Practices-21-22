@@ -1,7 +1,7 @@
 import socket
 from colorama import Fore
 # Configure the Server's IP and PORT
-PORT = 22001
+PORT = 22002
 IP = "127.0.0.1"
 MAX_OPEN_REQUESTS = 5
 
