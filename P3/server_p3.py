@@ -62,7 +62,6 @@ try:
 
             for k in percentages:
                 response = response + str(k) + ": " + str(n_bases[k]) + " (" + str(percentages[k]) + "%)\n"
-                response = response
 
         elif cmd == "COMP":
             response = Seq(arg).seq_complement() + "\n"
