@@ -1,5 +1,4 @@
 from server_class import Client
-from seq1 import Seq
 
 print(f"-----| Practice 3, Exercise 7 |------")
 

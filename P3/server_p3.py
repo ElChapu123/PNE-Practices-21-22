@@ -1,6 +1,7 @@
 import socket
 from seq1 import Seq
 from colorama import Fore
+
 try:
     #SERVER CONFIGURATION
 
