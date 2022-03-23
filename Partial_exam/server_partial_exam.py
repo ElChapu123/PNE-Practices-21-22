@@ -20,7 +20,7 @@ try:
 
     #OTHER INFO
     seq_list = ["ACCTCCTCTCCAGCAATGCCAACCCCAGTCCAGGCCCCCATCCGCCCAGGATCTCGATCA","AAAAACATTAATCTGTGGCCTTTCTTTGCCATTTCCAACTCTGCCACCTCCATCGAACGA","CAAGGTCCCCTTCTTCCTTTCCATTCCCGTCAGCTTCATTTCCCTAATCTCCGTACAAAT","CCCTAGCCTGACTCCCTTTCCTTTCCATCCTCACCAGACGCCCGCATGCCGGACCTCAAA","AGCGCAAACGCTAAAAACCGGTTGAGTTGACGCACGGAGAGAAGGGGTGTGTGGGTGGGT"]
-
+    value_dict = {"A": 2, "C": -1, "G": 3, "T": 5}
 
 
     #SERVER MAIN LOOP
@@ -72,7 +72,7 @@ try:
 
         elif cmd == "GENE":
             try:
-                filename = "../P0/DNA_SEQ/" + arg
+                filename = "./DNA_SEQ/" + arg
                 print(filename)
                 response = Seq()
                 response.read_fasta(filename)
@@ -81,6 +81,16 @@ try:
             except FileNotFoundError:
                 response = "File not found\n"
 
+        elif cmd == "MULT":
+            if Seq(arg).valid_sequence():
+                response = 1
+                for e in str(arg):
+                    response = response * value_dict[e]
+
+                response = str(response) + "\n"
+
+            else:
+                response = "We could not multiply the bases since the sequence is not correct\n"
         else:
             response = "Command not available in this server\n"
 
@@ -89,5 +99,7 @@ try:
         cs.send(response.encode())
 
         cs.close()
+
+
 except KeyboardInterrupt:
     print("Server closed")

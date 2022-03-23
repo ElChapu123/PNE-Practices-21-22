@@ -8,7 +8,7 @@ PORT = 21000
 c = Client(IP, PORT)
 print(c)
 
-command_list = ["PING", "GET", "INFO", "COMP", "REV", "GENE"]
+command_list = ["PING", "GET", "INFO", "COMP", "REV", "GENE", "MULT"]
 
 get_list = range(5)
 
@@ -59,5 +59,14 @@ for cmd in command_list:
         for e in gene_list:
             msg = cmd + " " + str(e)
             response = c.talk(msg)
+            if msg == "File not found":
+                print("File not found")
+            else:
+                print(f"{cmd} {e}:\n{response}\n[...]\n{response[-10:]}\n")
 
-            print(f"{cmd} {e}:\n{response}\n[...]\n{response[-10:]}\n")
+    elif cmd == "MULT":
+        seq = input("Enter a valid dna sequence: ")
+        msg = cmd + " " + str(seq)
+        response = c.talk(msg)
+
+        print(f"Sequence sent: {seq}\nValue obtained: {response}")
