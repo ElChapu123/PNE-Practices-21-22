@@ -42,6 +42,7 @@ try:
             arg = msg_split[1]
 
         print(Fore.GREEN + f"{cmd}" +  Fore.LIGHTWHITE_EX)
+
         if cmd == "PING":
             response = "OK!\n"
 
@@ -89,5 +90,6 @@ try:
         cs.send(response.encode())
 
         cs.close()
+
 except KeyboardInterrupt:
     print("Server closed")

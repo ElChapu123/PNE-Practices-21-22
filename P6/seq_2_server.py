@@ -65,8 +65,44 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             seq = seq_list[int(cmd_dict["number"])]
             contents = Path("./html/GET.html").read_text().format(n=n, seq=seq)
 
-        else:
-            contents = Path("html/error.html").read_text()
+        elif route.startswith("/gene?"):
+            gene_name = cmd_dict["gene"]
+            gene_seq = Seq()
+            file = "../P0/DNA_SEQ/" + gene_name
+            gene_seq.read_fasta(file)
+
+            gene_seq = gene_seq.format_txt()
+
+
+            contents = Path("./html/GET.html").read_text().format(n=gene_name, seq=gene_seq)
+
+        elif route.startswith("/operation?"):
+            cmd = cmd_dict["operation"]
+            arg = cmd_dict["seq"]
+            if not Seq(arg).valid_sequence():
+                contents = "Incorrect sequence, please enter a correct sequence"
+
+            elif cmd == "INFO":
+                new_seq = Seq(arg)
+                n_bases = new_seq.bases()
+                percentages = new_seq.base_percentage()
+                seq_len = new_seq.len()
+
+                contents = "Sequence: " + arg
+
+                contents = contents + "\nTotal lenght: " + str(seq_len) + "\n"
+
+                for k in percentages:
+                    contents = contents + str(k) + ": " + str(n_bases[k]) + " (" + str(percentages[k]) + "%)\n"
+
+            elif cmd == "COMP":
+                contents = Seq(arg).seq_complement() + "\n"
+
+            elif cmd == "REV":
+                contents = Seq(arg).seq_reverse() + "\n"
+
+            contents = contents.replace("\n", "<p><p>")
+            contents = Path("./html/OPERATION.html").read_text().format(op=cmd, result=contents, seq=arg)
 
         # Generating the response message
         self.send_response(200)  # -- Status line: OK!

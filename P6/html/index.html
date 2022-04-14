@@ -13,7 +13,7 @@
       Is the server OK?
       <input type="submit" value="PING">
     </form>
-
+    <hr>
     <form action="/get" method="get">
       Get a sequence, please select a sequence number:
       <select name="number">
@@ -23,9 +23,34 @@
             <option value=3>3</option>
             <option value=4>4</option>
       </select>
-
-    <input type="submit" value="GET">
+        <input type="submit" value="GET">
     </form>
+    <hr>
+    <form action="/gene" method="get">
+        Get a gene:
+        <select name="gene">
+            <option value="ADA">ADA</option>
+            <option value="FRAT1">FRAT1</option>
+            <option value="FXN">FXN</option>
+            <option value="RNU6_269">RNU6_269</option>
+            <option value="U5">U5</option>
+        </select>
+        <input type="submit" value="GENE">
+    </form>
+    <hr>
+
+  <form action="/operation" method="get">
+        Write a sequence:
+      <input type="text" name="seq">
+      <br>
+        Choose operation:
+        <input type="radio" name="operation" value="INFO" checked> Info
+        <input type="radio" name="operation" value="COMP"> Comp
+        <input type="radio" name="operation" value="REV"> Rev
+      <br>
+      Perform operation:<input type="submit" value="OPERATE">
+    </form>
+
 
   </body>
 </html>
