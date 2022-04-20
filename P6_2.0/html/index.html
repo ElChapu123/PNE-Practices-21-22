@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <title>FORM 2</title>
   </head>
+
+
   <body>
     <h1>SEQ2 server</h1>
     <p>Access to the server</p>
@@ -13,19 +15,23 @@
       Is the server OK?
       <input type="submit" value="PING">
     </form>
+
     <hr>
+
     <form action="/get" method="get">
       Get a sequence, please select a sequence number:
+
       <select name="number">
-            <option value=0>0</option>
-            <option value=1>1</option>
-            <option value=2>2</option>
-            <option value=3>3</option>
-            <option value=4>4</option>
+          {% for n in range(0, context.n_sequences) %}
+            <option value={{n}}>{{n}}</option>
+          {% endfor %}}
       </select>
+
         <input type="submit" value="GET">
     </form>
+
     <hr>
+
     <form action="/gene" method="get">
         Get a gene:
         <select name="gene">
@@ -37,6 +43,7 @@
         </select>
         <input type="submit" value="GENE">
     </form>
+
     <hr>
 
   <form action="/operation" method="get">
@@ -50,6 +57,7 @@
       <br>
       Perform operation:<input type="submit" value="OPERATE">
     </form>
+
     <hr>
 
 

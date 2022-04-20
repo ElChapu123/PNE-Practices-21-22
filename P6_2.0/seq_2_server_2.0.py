@@ -1,12 +1,20 @@
 import http.server
 import socketserver
-import termcolor
+import termcolor as t
 from pathlib import Path
 from seq1 import Seq
+import jinja2 as j
+from urllib.parse import urlparse, parse_qs
 
 # Define the Server's port
 PORT = 8080
 
+HTML_FOLDER = "./html/"
+
+def read_html_file(filename):
+    contents = Path(HTML_FOLDER + filename).read_text()
+    contents = j.Template(contents)
+    return contents
 
 # -- This is for preventing the error: "Port already in use"
 socketserver.TCPServer.allow_reuse_address = True
@@ -19,66 +27,53 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         """This method is called whenever the client invokes the GET method
         in the HTTP protocol request"""
+        print()
 
         seq_list = ["ACCTCCTCTCCAGCAATGCCAACCCCAGTCCAGGCCCCCATCCGCCCAGGATCTCGATCA","AAAAACATTAATCTGTGGCCTTTCTTTGCCATTTCCAACTCTGCCACCTCCATCGAACGA","CAAGGTCCCCTTCTTCCTTTCCATTCCCGTCAGCTTCATTTCCCTAATCTCCGTACAAAT","CCCTAGCCTGACTCCCTTTCCTTTCCATCCTCACCAGACGCCCGCATGCCGGACCTCAAA","AGCGCAAACGCTAAAAACCGGTTGAGTTGACGCACGGAGAGAAGGGGTGTGTGGGTGGGT"]
 
-        # Print the request line
-        termcolor.cprint(self.requestline, 'green')
 
-        try:
-            route = self.requestline.split(" ")[1]
-            filename = route[1:]
-            print("FILENAME", filename)
-        except IndexError:
-            route = "/"
+        url_path = urlparse(self.path)
+        path = url_path.path
+        query = url_path.query
 
-        try:
-            filename = filename.split("?")[1]
-            filename = filename.split("&")
+        cmd_dict = parse_qs(query)
 
-            cmd_dict = {}
+        t.cprint(path, 'yellow')
+        t.cprint(query, "green")
+        t.cprint(cmd_dict, "blue")
 
-            for e in filename:
-                e = e.split("=")
-                cmd_dict[e[0]] = e[1]
-            print(cmd_dict)
+        if self.path == "/":
+            contents = read_html_file("index.html")\
+                .render(context={"n_sequences": len(seq_list)})
 
-        except IndexError:
-            pass
+        elif path == "/favicon.ico":
+            contents = read_html_file("index.html")\
+                .render(context={"n_sequences": len(seq_list)})
 
+        elif path == "/ping":
+            contents = read_html_file(path[1:] + ".html").render()
 
+        elif path == "/get":
+            n = int(cmd_dict["number"][0])
+            seq = seq_list[int(cmd_dict["number"][0])]
 
-        termcolor.cprint(filename, "blue")
+            contents = read_html_file(path[1:] + ".html")\
+                .render(context={"n":n, "seq":seq})
 
-
-
-        if route == "/":
-            contents = Path("./html/index.html").read_text()
-        elif route == "/favicon.ico":
-            contents = Path("./html/index.html").read_text()
-
-        elif route.startswith("/ping"):
-            contents = Path("./html/PING.html").read_text()
-
-        elif route.startswith("/get?"):
-            n = int(cmd_dict["number"])
-            seq = seq_list[int(cmd_dict["number"])]
-            contents = Path("./html/GET.html").read_text().format(n=n, seq=seq)
-
-        elif route.startswith("/gene?"):
-            gene_name = cmd_dict["gene"]
+        elif path == "/gene":
+            gene_name = cmd_dict["gene"][0]
             gene_seq = Seq()
             file = "../P0/DNA_SEQ/" + gene_name
             gene_seq.read_fasta(file)
 
-            gene_seq = gene_seq.format_txt()
 
+            contents = read_html_file(path[1:] + ".html") \
+                .render(context={"n":gene_name, "seq":gene_seq})
 
-            contents = Path("./html/GET.html").read_text().format(n=gene_name, seq=gene_seq)
+        elif path == "/operation":
+            cmd = cmd_dict["operation"][0]
+            arg = cmd_dict["seq"][0]
 
-        elif route.startswith("/operation?"):
-            cmd = cmd_dict["operation"]
-            arg = cmd_dict["seq"]
             if not Seq(arg).valid_sequence():
                 contents = "Incorrect sequence, please enter a correct sequence"
 
@@ -102,7 +97,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 contents = Seq(arg).seq_reverse() + "\n"
 
             contents = contents.replace("\n", "<p><p>")
-            contents = Path("./html/OPERATION.html").read_text().format(op=cmd, result=contents, seq=arg)
+
+            contents = read_html_file(path[1:] + ".html") \
+                .render(context={"op":cmd, "result":contents, "seq":arg})
 
         # Generating the response message
         self.send_response(200)  # -- Status line: OK!

@@ -1,5 +1,5 @@
 import socket
-import colorama
+
 
 # SERVER IP, PORT
 # Write here the correct parameter for connecting to the

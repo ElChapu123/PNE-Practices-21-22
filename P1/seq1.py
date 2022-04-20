@@ -102,15 +102,3 @@ class Seq:
             base_dict[k] = round(base_dict[k] / t_lenght * 100, 2)
 
         return base_dict
-
-    def format_txt(self):
-        i = 0
-        new_seq = ""
-        for e in self.strbases:
-            new_seq += e
-            i += 1
-            if i == 50:
-                new_seq += "\n"
-                i = 0
-
-        return new_seq
