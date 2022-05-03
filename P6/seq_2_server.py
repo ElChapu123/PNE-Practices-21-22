@@ -101,7 +101,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             elif cmd == "REV":
                 contents = Seq(arg).seq_reverse() + "\n"
 
-            contents = contents.replace("\n", "<p><p>")
+            contents = contents.replace("\n", "<p><p>   ")
             contents = Path("./html/OPERATION.html").read_text().format(op=cmd, result=contents, seq=arg)
 
         # Generating the response message
