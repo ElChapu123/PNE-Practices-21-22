@@ -68,19 +68,47 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     .render(context={"length": str(len(species_dict["species"])), "limit": limit, "species": species})
 
         elif path == "/karyotype":
-            ENDPOINT = "/info/assembly/" + cmd_dict["species"][0]
+            ENDPOINT = "/info/assembly/" + cmd_dict["species"][0].strip()
             PARAMS = "?content-type=application/json"
 
             karyotype_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
-            if False:
-                contents = read_html_file("error.html") \
-                    .render(context={"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))})
-            else:
+
+            try:
                 chromosomes = ""
                 for e in karyotype_dict["karyotype"]:
                     chromosomes = chromosomes + "<br>&nbsp&nbsp&nbsp&nbsp• " + e
                 contents = read_html_file(path[1:] + ".html") \
-                    .render(context={"karyotype":chromosomes})
+                    .render(context={"karyotype": chromosomes})
+
+            except KeyError:
+                contents = read_html_file("error.html") \
+                    .render(context={"error": "Karyotype for " + cmd_dict["species"][0] + " not found"})
+
+        elif path == "/chromosome":
+            ENDPOINT = "/info/assembly/" + cmd_dict["species"][0].strip()
+            PARAMS = "?content-type=application/json"
+
+            chromosome_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
+
+            try:
+                chromosomes = chromosome_dict["top_level_region"]
+                correct = False
+                i = 0
+
+                while not correct:
+                    chromosome = chromosomes[i]
+                    if chromosome["name"] == cmd_dict["chromosome"]:
+                        correct = True
+                        t.cprint(chromosome, "red")
+
+
+
+                contents = read_html_file(path[1:] + ".html") \
+                    .render(context={"Chromosome": chromosome})
+
+            except KeyError:
+                contents = read_html_file("error.html") \
+                    .render(context={"error": "Karyotype for " + cmd_dict["species"][0] + " not found"})
 
 
         # Generating the response message
