@@ -77,8 +77,13 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 chromosomes = ""
                 for e in karyotype_dict["karyotype"]:
                     chromosomes = chromosomes + "<br>&nbsp&nbsp&nbsp&nbsp• " + e
-                contents = read_html_file(path[1:] + ".html") \
-                    .render(context={"karyotype": chromosomes})
+                if chromosomes.replace("<br>&nbsp&nbsp&nbsp&nbsp• ", "") == "":
+                    contents = read_html_file(path[1:] + ".html") \
+                        .render(context={"karyotype": "Karyotype for this species was empty"})
+
+                else:
+                    contents = read_html_file(path[1:] + ".html") \
+                        .render(context={"karyotype": chromosomes})
 
             except KeyError:
                 contents = read_html_file("error.html") \
