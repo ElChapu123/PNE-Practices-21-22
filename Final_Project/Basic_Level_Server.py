@@ -2,7 +2,6 @@ import http.server
 import socketserver
 import termcolor as t
 from pathlib import Path
-from seq1 import Seq
 import jinja2 as j
 from urllib.parse import urlparse, parse_qs
 import commands
