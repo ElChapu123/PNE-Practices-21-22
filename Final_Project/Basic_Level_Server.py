@@ -49,25 +49,29 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             contents = Path("./html/index.html").read_text()
 
         elif path == "/list":
-            ENDPOINT = "/info/species"
-            PARAMS = "?content-type=application/json"
+            try:
+                ENDPOINT = "/info/species"
+                PARAMS = "?content-type=application/json"
 
-            species_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
-            species = ""
-            limit = int(cmd_dict["limit"][0])
+                species_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
+                species = ""
+                limit = int(cmd_dict["limit"][0])
 
-            if limit > len(species_dict["species"]) or 0 > limit:
+                if limit > len(species_dict["species"]) or 0 > limit:
+                    contents = read_html_file("error.html") \
+                        .render(context={"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))})
+                else:
+                    for n in range(0, int(limit)):
+                        species = species + "<br>&nbsp&nbsp&nbsp&nbsp• " + species_dict["species"][n]["name"]
+
+                    contents = read_html_file(path[1:] + ".html") \
+                        .render(context={"length": str(len(species_dict["species"])), "limit": limit, "species": species})
+            except ValueError:
                 contents = read_html_file("error.html") \
                     .render(context={"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))})
-            else:
-                for n in range(0, int(limit)):
-                    species = species + "<br>&nbsp&nbsp&nbsp&nbsp• " + species_dict["species"][n]["name"]
-
-                contents = read_html_file(path[1:] + ".html") \
-                    .render(context={"length": str(len(species_dict["species"])), "limit": limit, "species": species})
 
         elif path == "/karyotype":
-            ENDPOINT = "/info/assembly/" + cmd_dict["species"][0].strip()
+            ENDPOINT = "/info/assembly/" + cmd_dict["species"][0].strip().replace(" ", "_")
             PARAMS = "?content-type=application/json"
 
             karyotype_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
@@ -89,27 +93,32 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     .render(context={"error": "Karyotype for " + cmd_dict["species"][0] + " not found"})
 
         elif path == "/chromosome":
-            ENDPOINT = "/info/assembly/" + cmd_dict["species"][0].strip()
+            ENDPOINT = "/info/assembly/" + cmd_dict["species"][0].strip().replace(" ", "_")
             PARAMS = "?content-type=application/json"
 
-            chromosome_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
-
+            species_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
             try:
-                chromosomes = chromosome_dict["top_level_region"]
+                chromosome_dict_list = species_dict["top_level_region"]
                 correct = False
                 i = 0
+                chosen_chromosome = cmd_dict["chromosome"][0]
 
-                while not correct:
-                    chromosome = chromosomes[i]
-                    if chromosome["name"] == cmd_dict["chromosome"]:
+                while not correct and i < len(chromosome_dict_list):
+                    chromosome = chromosome_dict_list[i]
+
+                    if chromosome["name"] == chosen_chromosome:
                         correct = True
-                        t.cprint(chromosome, "red")
 
+                    print(correct)
 
+                    i += 1
+                chromosome_length = chromosome["length"]
 
                 contents = read_html_file(path[1:] + ".html") \
-                    .render(context={"Chromosome": chromosome})
-
+                    .render(context={"chromosome": chromosome["name"], "chromosome_length": chromosome_length})
+            except IndexError:
+                contents = read_html_file("error.html") \
+                    .render(context={"error": "Chromosome " + chosen_chromosome + " not found"})
             except KeyError:
                 contents = read_html_file("error.html") \
                     .render(context={"error": "Karyotype for " + cmd_dict["species"][0] + " not found"})

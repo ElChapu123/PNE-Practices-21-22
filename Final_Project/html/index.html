@@ -29,6 +29,8 @@
       <input type="submit" value="SEND">
     </form>
 
+    <hr>
+
    <form action="/chromosome" method="get">
         Information about the karyotype:
         <br>
@@ -36,6 +38,42 @@
         <br>
         Select the chromosome: <input type="text" name="chromosome">
         <br>
+      <input type="submit" value="SEND">
+    </form>
+
+    <hr>
+
+ <form action="/geneseq" method="get">
+      Obtain a gene sequence:
+      <br>
+      Select the gene identifier: <input type="text" name="identifier">
+      <br>
+        If you don't know the identifier you can search it <a href="http://www.ensembl.org/index.html" target="_blank">here</a>
+     <br>
+      <input type="submit" value="SEND">
+    </form>
+
+   <form action="/genecalc" method="get">
+      Obtain a gene sequence's characteristics:
+      <br>
+      Select the gene identifier: <input type="text" name="identifier">
+      <br>
+        If you don't know the identifier you can search it <a href="http://www.ensembl.org/index.html" target="_blank">here</a>
+     <br>
+      <input type="submit" value="SEND">
+    </form>
+
+  <hr>
+
+   <form action="/genelist" method="get">
+        Information about the karyotype:
+        <br>
+        Select the chromosome: <input type="text" name="chromosome">
+        <br>
+        Select the start point: <input type="text" name="startpoint">
+        Select the end point: <input type="text" name="endpoint">
+        <br>
+
       <input type="submit" value="SEND">
     </form>
 
