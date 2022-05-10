@@ -7,6 +7,7 @@ import jinja2 as j
 from urllib.parse import urlparse, parse_qs
 import commands
 from seq1 import Seq
+import json
 
 # Define the Server's port
 PORT = 8080
@@ -68,7 +69,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                             contents = read_html_file(path[1:] + ".html") \
                                 .render(context={"length": str(len(species_dict["species"])), "limit": limit, "species": species})
                         else:
-                            contents = {"species": species, "limit": limit, "species": species}
+                            contents = {"length": str(len(species_dict["species"])), "limit": limit, "species": species}
+                            contents = json.dumps(contents)
+
                 except ValueError:
                     contents = read_html_file("error.html") \
                         .render(context={"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))})
@@ -231,7 +234,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)  # -- Status line: OK!
 
             # Define the content-type header:
-            self.send_header('Content-Type', 'text/html')
+            if not "json" in cmd_dict:
+                self.send_header('Content-Type', 'text/html')
+            else:
+                self.send_header('Content-Type', 'application/json')
+
             self.send_header('Content-Length', len(str.encode(contents)))
 
         except UnboundLocalError:
