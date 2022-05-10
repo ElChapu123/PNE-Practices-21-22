@@ -29,9 +29,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         in the HTTP protocol request"""
         print()
 
-        seq_list = ["ACCTCCTCTCCAGCAATGCCAACCCCAGTCCAGGCCCCCATCCGCCCAGGATCTCGATCA","AAAAACATTAATCTGTGGCCTTTCTTTGCCATTTCCAACTCTGCCACCTCCATCGAACGA","CAAGGTCCCCTTCTTCCTTTCCATTCCCGTCAGCTTCATTTCCCTAATCTCCGTACAAAT","CCCTAGCCTGACTCCCTTTCCTTTCCATCCTCACCAGACGCCCGCATGCCGGACCTCAAA","AGCGCAAACGCTAAAAACCGGTTGAGTTGACGCACGGAGAGAAGGGGTGTGTGGGTGGGT"]
-
-
         url_path = urlparse(self.path)
         path = url_path.path
         query = url_path.query
@@ -54,7 +51,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 PARAMS = "?content-type=application/json"
 
                 species_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
-                species = ""
+                species = []
                 limit = int(cmd_dict["limit"][0])
 
                 if limit > len(species_dict["species"]) or 0 > limit:
@@ -62,7 +59,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         .render(context={"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))})
                 else:
                     for n in range(0, int(limit)):
-                        species = species + "<br>&nbsp&nbsp&nbsp&nbsp• " + species_dict["species"][n]["name"]
+                        species.append(species_dict["species"][n]["name"])
 
                     contents = read_html_file(path[1:] + ".html") \
                         .render(context={"length": str(len(species_dict["species"])), "limit": limit, "species": species})

@@ -64,9 +64,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         for n in range(0, int(limit)):
                             species.append(species_dict["species"][n]["name"])
 
-                        contents = read_html_file(path[1:] + ".html") \
-                            .render(context={"length": str(len(species_dict["species"])), "limit": limit, "species": species})
-
+                        if not "json" in cmd_dict:
+                            contents = read_html_file(path[1:] + ".html") \
+                                .render(context={"length": str(len(species_dict["species"])), "limit": limit, "species": species})
+                        else:
+                            contents = {"species": species, "limit": limit, "species": species}
                 except ValueError:
                     contents = read_html_file("error.html") \
                         .render(context={"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))})

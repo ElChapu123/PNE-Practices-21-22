@@ -16,6 +16,10 @@
       <br>
       Select the limit: <input type="text" name="limit">
       <br>
+      <br>
+      Obtain json:
+      <input type="checkbox" name=json>
+      <br>
       <input type="submit" value="SEND">
     </form>
 
@@ -25,20 +29,30 @@
       Information about the karyotype:
       <br>
       Select the species: <input type="text" name="species">
+     <br>
+     <br>
+      Obtain json:
+      <input type="checkbox" name=json>
       <br>
       <input type="submit" value="SEND">
+
     </form>
 
     <hr>
 
    <form action="/chromosome" method="get">
-        Information about the karyotype:
+        Chromosome lenght:
         <br>
         Select the species: <input type="text" name="species">
         <br>
         Select the chromosome: <input type="text" name="chromosome">
         <br>
+       <br>
+      Obtain json:
+      <input type="checkbox" name=json>
+      <br>
       <input type="submit" value="SEND">
+
     </form>
 
     <hr>
@@ -50,8 +64,14 @@
       <br>
         If you don't know the identifier you can search it <a href="http://www.ensembl.org/index.html" target="_blank">here</a>
      <br>
+     <br>
+       Obtain json:
+      <input type="checkbox" name=json>
+      <br>
       <input type="submit" value="SEND">
     </form>
+
+    <hr>
 
    <form action="/genecalc" method="get">
       Obtain a gene sequence's characteristics:
@@ -60,7 +80,13 @@
       <br>
         If you don't know the identifier you can search it <a href="http://www.ensembl.org/index.html" target="_blank">here</a>
      <br>
+   <br>
+
+       Obtain json:
+      <input type="checkbox" name=json>
+     <br>
       <input type="submit" value="SEND">
+
     </form>
 
   <hr>
@@ -72,8 +98,10 @@
         <br>
         Select the start point: <input type="text" name="startpoint">
         Select the end point: <input type="text" name="endpoint">
+        <br><br>
+        Obtain json:
+      <input type="checkbox" name=json>
         <br>
-
       <input type="submit" value="SEND">
     </form>
 
