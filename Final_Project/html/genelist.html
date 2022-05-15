@@ -6,7 +6,10 @@
 </head>
 <body style="background-color: lightblue">
 <h1>Genes in {{context.region}}</h1>
-The genes in your region are: {{context.genes}}
+The genes in your region are:
+{%for e in context.genes%}
+    <ul><li>{{e}}</li></ul>
+{%endfor%}
 <br>
 
 <p> </p>

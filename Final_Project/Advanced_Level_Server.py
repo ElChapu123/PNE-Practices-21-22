@@ -83,11 +83,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 karyotype_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
 
                 try:
-                    chromosomes = ""
+                    chromosomes = []
                     for e in karyotype_dict["karyotype"]:
-                        chromosomes = chromosomes + "<br>&nbsp&nbsp&nbsp&nbsp• " + e
+                        chromosomes.append(e)
 
-                    if chromosomes.replace("<br>&nbsp&nbsp&nbsp&nbsp• ", "") == "":
+                    if chromosomes == []:
                         contents = read_html_file(path[1:] + ".html") \
                             .render(context={"karyotype": "Karyotype for this species was empty"})
 
@@ -96,7 +96,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                             contents = read_html_file(path[1:] + ".html") \
                                 .render(context={"karyotype": chromosomes})
                         else:
-                            contents = {"Species": cmd_dict["species"][0], "karyotype": chromosomes.split("<br>&nbsp&nbsp&nbsp&nbsp• ")}
+                            contents = {"Species": cmd_dict["species"][0], "karyotype": chromosomes}
 
                 except KeyError:
                     contents = read_html_file("error.html") \
@@ -214,15 +214,15 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                     if "associated_gene" in e["attributes"]:
                                         gene_list.append(e["attributes"]["associated_gene"])
 
-                    genes = ""
+                    genes = []
                     for e in gene_list:
-                        genes = genes + "<br>&nbsp&nbsp&nbsp&nbsp• " + e
+                        genes.append(e)
 
 
-                    if genes.replace("<br>&nbsp&nbsp&nbsp&nbsp• ", "") == "":
+                    if genes == []:
                         if "json" not in cmd_dict:
-                            contents = read_html_file(path[1:] + ".html") \
-                                .render(context={"region": region, "genes": "No genes found"})
+                            contents = read_html_file("error.html") \
+                                .render(context={"error": "No genes found"})
                         else:
                             contents = {"region": region, "genes": "No genes found"}
 

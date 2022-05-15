@@ -6,7 +6,10 @@
 </head>
 <body style="background-color: lightblue">
 <h1>Karyotype</h1>
-The karyotype of your species is: {{context.karyotype}}
+The karyotype of your species is:
+{%for e in context.karyotype%}
+    <ul><li>{{e}}</li></ul>
+{%endfor%}
 <br>
 
 <p> </p>
