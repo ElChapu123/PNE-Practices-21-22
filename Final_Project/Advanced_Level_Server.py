@@ -70,7 +70,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                 .render(context={"length": str(len(species_dict["species"])), "limit": limit, "species": species})
                         else:
                             contents = {"length": str(len(species_dict["species"])), "limit": limit, "species": species}
-                            contents = json.dumps(contents)
+
 
                 except ValueError:
                     contents = read_html_file("error.html") \
@@ -92,8 +92,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                             .render(context={"karyotype": "Karyotype for this species was empty"})
 
                     else:
-                        contents = read_html_file(path[1:] + ".html") \
-                            .render(context={"karyotype": chromosomes})
+                        if not "json" in cmd_dict:
+                            contents = read_html_file(path[1:] + ".html") \
+                                .render(context={"karyotype": chromosomes})
+                        else:
+                            contents = {"Species": cmd_dict["species"][0], "karyotype": chromosomes.split("<br>&nbsp&nbsp&nbsp&nbsp• ")}
 
                 except KeyError:
                     contents = read_html_file("error.html") \
@@ -119,9 +122,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         i += 1
 
                     chromosome_length = chromosome["length"]
-
-                    contents = read_html_file(path[1:] + ".html") \
-                        .render(context={"chromosome": chromosome["name"], "chromosome_length": chromosome_length})
+                    if "json" not in cmd_dict:
+                        contents = read_html_file(path[1:] + ".html") \
+                            .render(context={"chromosome": chromosome["name"], "chromosome_length": chromosome_length})
+                    else:
+                        contents = {"chromosome": chromosome["name"], "chromosome_lenght": chromosome_length}
                 except IndexError:
                     contents = read_html_file("error.html") \
                         .render(context={"error": "Chromosome " + chosen_chromosome + " not found"})
@@ -140,8 +145,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     seq = Seq(gene_dict["seq"])
 
                     if seq.valid_sequence():
-                        contents = read_html_file("geneseq.html") \
-                            .render(context={"seq": str(seq), "gene": wanted_gene})
+                        if "json" not in cmd_dict:
+                            contents = read_html_file("geneseq.html") \
+                                .render(context={"seq": str(seq), "gene": wanted_gene})
+                        else:
+                            contents = {"seq": str(seq), "gene": wanted_gene}
                     else:
                         contents = "Incorrect sequence, please enter a correct sequence"
 
@@ -173,9 +181,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                             contents = contents + str(k) + ": " + str(n_bases[k]) + " (" + str(percentages[k]) + "%)\n"
 
                         contents = contents.replace("\n", "<p><p>")
-
-                        contents = read_html_file(path[1:] + ".html") \
-                            .render(context={"result": contents, "seq": seq})
+                        if "json" not in cmd_dict:
+                            contents = read_html_file(path[1:] + ".html") \
+                                .render(context={"result": contents, "seq": seq})
+                        else:
+                            contents = {"seq": str(seq), "length": seq_len, "percentages": percentages}
 
                 except KeyError:
                     contents = read_html_file("error.html") \
@@ -210,12 +220,18 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
 
                     if genes.replace("<br>&nbsp&nbsp&nbsp&nbsp• ", "") == "":
-                        contents = read_html_file(path[1:] + ".html") \
-                            .render(context={"region": region, "genes": "No genes found"})
+                        if "json" not in cmd_dict:
+                            contents = read_html_file(path[1:] + ".html") \
+                                .render(context={"region": region, "genes": "No genes found"})
+                        else:
+                            contents = {"region": region, "genes": "No genes found"}
 
                     else:
-                        contents = read_html_file(path[1:] + ".html") \
-                            .render(context={"region": region, "genes": genes})
+                        if "json" not in cmd_dict:
+                            contents = read_html_file(path[1:] + ".html") \
+                                .render(context={"region": region, "genes": genes})
+                        else:
+                            contents = {"region": region, "genes": genes}
 
                 except KeyError:
                     contents = read_html_file("error.html") \
@@ -237,6 +253,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             if not "json" in cmd_dict:
                 self.send_header('Content-Type', 'text/html')
             else:
+                contents = json.dumps(contents)
                 self.send_header('Content-Type', 'application/json')
 
             self.send_header('Content-Length', len(str.encode(contents)))
