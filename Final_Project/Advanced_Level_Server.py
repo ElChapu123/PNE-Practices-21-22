@@ -53,10 +53,14 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 try:
                     ENDPOINT = "/info/species"
                     PARAMS = "?content-type=application/json"
-
                     species_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
                     species = []
-                    limit = int(cmd_dict["limit"][0])
+
+                    if cmd_dict != {}:
+                        limit = int(cmd_dict["limit"][0])
+
+                    else:
+                        limit = len(species_dict["species"])
 
                     if limit > len(species_dict["species"]) or 0 > limit:
                         contents = read_html_file("error.html") \
@@ -70,7 +74,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                 .render(context={"length": str(len(species_dict["species"])), "limit": limit, "species": species})
                         else:
                             contents = {"length": str(len(species_dict["species"])), "limit": limit, "species": species}
-
 
                 except ValueError:
                     contents = read_html_file("error.html") \
