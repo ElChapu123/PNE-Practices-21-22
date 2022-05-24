@@ -58,21 +58,17 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     if limit > len(species_dict["species"]) or 0 > limit:
                         contents = {"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))}
                         contents = commands.create_response("error.html", contents, cmd_dict)
-                        contents = read_html_file("error.html") \
-                            .render(context={"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))})
+
                     else:
                         for n in range(0, int(limit)):
                             species.append(species_dict["species"][n]["name"])
 
-                        if not "json" in cmd_dict:
-                            contents = read_html_file(path[1:] + ".html") \
-                                .render(context={"length": str(len(species_dict["species"])), "limit": limit, "species": species})
-                        else:
-                            contents = {"length": str(len(species_dict["species"])), "limit": limit, "species": species}
+                        contents = {"length": str(len(species_dict["species"])), "limit": limit, "species": species}
+                        contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
 
                 except ValueError:
-                    contents = read_html_file("error.html") \
-                        .render(context={"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))})
+                    contents = {"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))}
+                    contents = commands.create_response("error.html", contents, cmd_dict)
 
             elif path == "/karyotype":
                 ENDPOINT = "/info/assembly/" + cmd_dict["species"][0].strip().replace(" ", "_")
@@ -86,15 +82,16 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         chromosomes.append(e)
 
                     if chromosomes == []:
-                        contents = read_html_file(path[1:] + ".html") \
-                            .render(context={"karyotype": "Karyotype for this species was empty"})
+                        contents = {"karyotype": "Karyotype for this species was empty"}
+                        contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
 
                     else:
                         contents = {"Species": cmd_dict["species"][0], "karyotype": chromosomes}
                         contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
+
                 except KeyError:
-                    contents = read_html_file("error.html") \
-                        .render(context={"error": "Karyotype for " + cmd_dict["species"][0] + " not found"})
+                    contents = {"error": "Species not found"}
+                    contents = commands.create_response("error.html", contents, cmd_dict)
 
             elif path == "/chromosome":
                 ENDPOINT = "/info/assembly/" + cmd_dict["species"][0].strip().replace(" ", "_")
