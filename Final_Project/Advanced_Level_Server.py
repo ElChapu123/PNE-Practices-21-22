@@ -3,7 +3,6 @@ import http
 import socketserver
 import termcolor as t
 from pathlib import Path
-import jinja2 as j
 from urllib.parse import urlparse, parse_qs
 import commands
 from seq1 import Seq
@@ -112,10 +111,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                         i += 1
 
-                    if correct:
-                        chromosome_length = chromosome["length"]
+                    print(chromosome)
+                    print(correct)
 
-                        contents = {"chromosome": chromosome["name"], "chromosome_lenght": chromosome_length}
+                    if correct:
+                        contents = {"chromosome": chromosome["name"], "length": chromosome["length"]}
                         contents = commands.create_response(path[1:] +".html", contents, cmd_dict)
 
                     else:
@@ -160,7 +160,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     gene_dict = commands.make_ensembl_request(ENDPOINT + wanted_gene, PARAMS)
                     seq = Seq(gene_dict["seq"])
 
-                    n_bases = seq.bases()
                     percentages = seq.base_percentage()
                     seq_len = seq.len()
 
@@ -196,12 +195,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
 
                     if gene_list == []:
-                        contents = {"region": region, "genes": "No genes found"}
-
+                        contents = {"error": "No genes found in region " + region}
+                        contents = commands.create_response("error.html", contents, cmd_dict)
                     else:
                         contents = {"region": region, "genes": gene_list}
-
-                    contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
+                        contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
 
                 except KeyError:
                     contents = {"error": "Region not found"}
@@ -229,8 +227,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-Length', len(str.encode(contents)))
 
         except UnboundLocalError:
-            contents = read_html_file("error.html") \
-                .render(context={"error": "Page not found"})
+            contents = {"error": "Page not found"}
+            contents = commands.create_response("error.html", contents, cmd_dict)
 
             self.send_header('Content-Type', 'text/html')
             self.send_header('Content-Length', len(str.encode(contents)))

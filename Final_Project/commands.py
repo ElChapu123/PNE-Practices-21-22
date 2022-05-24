@@ -1,5 +1,7 @@
 from pathlib import Path
 import jinja2 as j
+import http.client
+import json
 
 def read_html_file(filename):
     HTML_FOLDER = "./html/"
@@ -8,9 +10,6 @@ def read_html_file(filename):
     return contents
 
 def make_ensembl_request(ENDPOINT, PARAMS):
-    import http.client
-    import json
-
     SERVER = 'rest.ensembl.org'
 
     URL = SERVER + ENDPOINT + PARAMS
@@ -50,9 +49,6 @@ def create_response(html_file, context_dict, cmd_dict):
     return contents
 
 def make_server_request(ENDPOINT, PARAMS):
-    import http.client
-    import json
-
     SERVER = "127.0.0.1:8080"
 
     URL = SERVER + ENDPOINT + PARAMS

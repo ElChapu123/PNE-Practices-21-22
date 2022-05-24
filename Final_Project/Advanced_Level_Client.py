@@ -2,7 +2,6 @@ from server_class import Client
 import commands
 import termcolor as t
 
-print(f"-----| Practice 3, Exercise 7 |------")
 
 IP = "127.0.0.1"
 PORT = 8080
@@ -10,23 +9,58 @@ PORT = 8080
 c = Client(IP, PORT)
 print(c)
 
-command_list = ["/list", "/karyotype", "/chromosome", "/geneseq", "/geneseq", "/genelist"]
+command_list = ["/list", "/karyotype", "/chromosome", "/geneseq", "/genecalc", "/genelist"]
 
 for cmd in command_list:
-    t.cprint("* Testing " + cmd + "...", "green", end="\n\n")
+    t.cprint("* Testing " + cmd + "...", "green")
 
     if cmd == "/list":
         limit = input("Enter a limit for the list: ")
+
         params = "?" + "limit=" + limit + "&json=on"
 
         response = commands.make_server_request(cmd, params)
 
     elif cmd == "/karyotype":
         species = input("Enter a species: ")
+
         params = "?" + "species=" + species + "&json=on"
 
         response = commands.make_server_request(cmd, params)
-    print(response)
+
+    elif cmd == "/chromosome":
+        species = input("Enter a species: ")
+        chromosome = input("Enter a chromosome: ")
+
+        params = "?" + "species=" + species + "&chromosome=" + chromosome + "&json=on"
+
+        response = commands.make_server_request(cmd, params)
+
+    elif cmd == "/geneseq":
+        identifier = input("Enter a gene identifier: ")
+
+        params = "?" + "identifier=" + identifier + "&json=on"
+
+        response = commands.make_server_request(cmd, params)
+
+    elif cmd == "/genecalc":
+        identifier = input("Enter a gene identifier: ")
+
+        params = "?" + "identifier=" + identifier + "&json=on"
+
+        response = commands.make_server_request(cmd, params)
+
+    elif cmd == "/genelist":
+        chromosome = input("Enter a chromosome: ")
+        startpoint = input("Select the start point: ")
+        endpoint = input("Select the end point: ")
+
+        params = "?" + "chromosome=" + chromosome + "&startpoint=" + startpoint + "&endpoint=" + endpoint +"&json=on"
+
+        response = commands.make_server_request(cmd, params)
+
+    print()
+
     for e in response:
         t.cprint(e + ": ", "blue", end="")
         if type(response[e]) == list:
