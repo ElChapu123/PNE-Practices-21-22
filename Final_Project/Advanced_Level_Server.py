@@ -114,21 +114,20 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                     if correct:
                         chromosome_length = chromosome["length"]
-                        if "json" not in cmd_dict:
-                            contents = read_html_file(path[1:] + ".html") \
-                                .render(context={"chromosome": chromosome["name"], "chromosome_length": chromosome_length})
-                        else:
-                            contents = {"chromosome": chromosome["name"], "chromosome_lenght": chromosome_length}
+
+                        contents = {"chromosome": chromosome["name"], "chromosome_lenght": chromosome_length}
+                        contents = commands.create_response(path[1:] +".html", contents, cmd_dict)
+
                     else:
-                        contents = read_html_file("error.html") \
-                            .render(context={"error": "Chromosome " + chosen_chromosome + " not found"})
+                        contents = {"error": "Chromosome " + chosen_chromosome + " not found"}
+                        contents = commands.create_response("error.html", contents, cmd_dict)
 
                 except IndexError:
-                    contents = read_html_file("error.html") \
-                        .render(context={"error": "Chromosome " + chosen_chromosome + " not found"})
+                    contents = {"error": "Chromosome " + chosen_chromosome + " not found"}
+                    contents = commands.create_response("error.html", contents, cmd_dict)
                 except KeyError:
-                    contents = read_html_file("error.html") \
-                        .render(context={"error": "Karyotype for " + cmd_dict["species"][0] + " not found"})
+                    contents = {"error": "Karyotype for " + cmd_dict["species"][0] + " not found"}
+                    contents = commands.create_response("error.html", contents, cmd_dict)
 
             elif path == "/geneseq":
                 try:
@@ -141,17 +140,16 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     seq = Seq(gene_dict["seq"])
 
                     if seq.valid_sequence():
-                        if "json" not in cmd_dict:
-                            contents = read_html_file("geneseq.html") \
-                                .render(context={"seq": str(seq), "gene": wanted_gene})
-                        else:
-                            contents = {"seq": str(seq), "gene": wanted_gene}
+                        contents = {"seq": str(seq), "gene": wanted_gene}
+                        contents = commands.create_response("geneseq.html", contents, cmd_dict)
+
                     else:
-                        contents = "Incorrect sequence, please enter a correct sequence"
+                        contents = {"error":"Incorrect sequence, please enter a correct sequence"}
+                        contents = commands.create_response("error.html", contents, cmd_dict)
 
                 except KeyError:
-                    contents = read_html_file("error.html") \
-                        .render(context={"error": "Gene with identifier " + wanted_gene + " not found"})
+                    contents = {"error": "Gene with identifier " + wanted_gene + " not found"}
+                    contents = commands.create_response("error.html", contents, cmd_dict)
 
             elif path == "/genecalc":
                 try:
@@ -162,30 +160,16 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     gene_dict = commands.make_ensembl_request(ENDPOINT + wanted_gene, PARAMS)
                     seq = Seq(gene_dict["seq"])
 
-                    if not seq.valid_sequence():
-                        contents = read_html_file("error.html") \
-                            .render(context={"error": "Incorrect sequence, please enter a correct sequence"})
-                    else:
-                        n_bases = seq.bases()
-                        percentages = seq.base_percentage()
-                        seq_len = seq.len()
+                    n_bases = seq.bases()
+                    percentages = seq.base_percentage()
+                    seq_len = seq.len()
 
-
-                        contents = "\nTotal lenght: " + str(seq_len) + "\n"
-
-                        for k in percentages:
-                            contents = contents + str(k) + ": " + str(n_bases[k]) + " (" + str(percentages[k]) + "%)\n"
-
-                        contents = contents.replace("\n", "<p><p>")
-                        if "json" not in cmd_dict:
-                            contents = read_html_file(path[1:] + ".html") \
-                                .render(context={"result": contents, "seq": seq})
-                        else:
-                            contents = {"seq": str(seq), "length": seq_len, "percentages": percentages}
+                    contents = {"seq": str(seq), "length": seq_len, "percentages": percentages}
+                    contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
 
                 except KeyError:
-                    contents = read_html_file("error.html") \
-                        .render(context={"error": "Gene with identifier " + wanted_gene + " not found"})
+                    contents = {"error": "Gene with identifier " + wanted_gene + " not found"}
+                    contents = commands.create_response("error.html", contents, cmd_dict)
 
             elif path == "/genelist":
                 try:
@@ -212,32 +196,26 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
 
                     if gene_list == []:
-                        if "json" not in cmd_dict:
-                            contents = read_html_file("error.html") \
-                                .render(context={"error": "No genes found"})
-                        else:
-                            contents = {"region": region, "genes": "No genes found"}
+                        contents = {"region": region, "genes": "No genes found"}
 
                     else:
-                        if "json" not in cmd_dict:
-                            contents = read_html_file(path[1:] + ".html") \
-                                .render(context={"region": region, "genes": gene_list})
-                        else:
-                            contents = {"region": region, "genes": gene_list}
+                        contents = {"region": region, "genes": gene_list}
+
+                    contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
 
                 except KeyError:
-                    contents = read_html_file("error.html") \
-                        .render(context={"error": "Region not found"})
+                    contents = {"error": "Region not found"}
+                    contents = commands.create_response("error.html", contents, cmd_dict)
 
         except KeyError:
-            contents = read_html_file("error.html") \
-                .render(context={"error": "Please enter a valid argument"})
+            contents = {"error": "Please enter a valid argument"}
+            contents = commands.create_response("error.html", contents, cmd_dict)
+
         except http.client.InvalidURL:
-            contents = read_html_file("error.html") \
-                .render(context={"error": "Please enter a valid statement"})
+            contents = {"error": "Please enter a valid statement"}
+            contents = commands.create_response("error.html", contents, cmd_dict)
 
         try:
-
             # Generating the response message
             self.send_response(200)  # -- Status line: OK!
 

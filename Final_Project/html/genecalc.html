@@ -10,7 +10,13 @@
 <p> </p>
 
 <h1>Characteristics:</h1>
-{{context.result}}
+Length: {{context.length}}
+<p></p>
+Percentages:
+<p></p>
+{%for e in context.percentages%}
+    <ul><li>{{e}}: {{context.percentages[e]}}%</li></ul>
+{%endfor%}
 <p> </p>
 
 <a href="/">Main page</a>
