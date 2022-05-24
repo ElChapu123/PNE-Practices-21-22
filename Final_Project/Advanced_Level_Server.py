@@ -12,13 +12,6 @@ import json
 # Define the Server's port
 PORT = 8080
 
-HTML_FOLDER = "./html/"
-
-def read_html_file(filename):
-    contents = Path(HTML_FOLDER + filename).read_text()
-    contents = j.Template(contents)
-    return contents
-
 # -- This is for preventing the error: "Port already in use"
 socketserver.TCPServer.allow_reuse_address = True
 
@@ -63,6 +56,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         limit = len(species_dict["species"])
 
                     if limit > len(species_dict["species"]) or 0 > limit:
+                        contents = {"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))}
+                        contents = commands.create_response("error.html", contents, cmd_dict)
                         contents = read_html_file("error.html") \
                             .render(context={"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))})
                     else:
@@ -95,12 +90,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                             .render(context={"karyotype": "Karyotype for this species was empty"})
 
                     else:
-                        if not "json" in cmd_dict:
-                            contents = read_html_file(path[1:] + ".html") \
-                                .render(context={"karyotype": chromosomes})
-                        else:
-                            contents = {"Species": cmd_dict["species"][0], "karyotype": chromosomes}
-
+                        contents = {"Species": cmd_dict["species"][0], "karyotype": chromosomes}
+                        contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
                 except KeyError:
                     contents = read_html_file("error.html") \
                         .render(context={"error": "Karyotype for " + cmd_dict["species"][0] + " not found"})
@@ -124,12 +115,17 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                         i += 1
 
-                    chromosome_length = chromosome["length"]
-                    if "json" not in cmd_dict:
-                        contents = read_html_file(path[1:] + ".html") \
-                            .render(context={"chromosome": chromosome["name"], "chromosome_length": chromosome_length})
+                    if correct:
+                        chromosome_length = chromosome["length"]
+                        if "json" not in cmd_dict:
+                            contents = read_html_file(path[1:] + ".html") \
+                                .render(context={"chromosome": chromosome["name"], "chromosome_length": chromosome_length})
+                        else:
+                            contents = {"chromosome": chromosome["name"], "chromosome_lenght": chromosome_length}
                     else:
-                        contents = {"chromosome": chromosome["name"], "chromosome_lenght": chromosome_length}
+                        contents = read_html_file("error.html") \
+                            .render(context={"error": "Chromosome " + chosen_chromosome + " not found"})
+
                 except IndexError:
                     contents = read_html_file("error.html") \
                         .render(context={"error": "Chromosome " + chosen_chromosome + " not found"})
@@ -217,12 +213,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                     if "associated_gene" in e["attributes"]:
                                         gene_list.append(e["attributes"]["associated_gene"])
 
-                    genes = []
-                    for e in gene_list:
-                        genes.append(e)
 
-
-                    if genes == []:
+                    if gene_list == []:
                         if "json" not in cmd_dict:
                             contents = read_html_file("error.html") \
                                 .render(context={"error": "No genes found"})
@@ -232,13 +224,13 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     else:
                         if "json" not in cmd_dict:
                             contents = read_html_file(path[1:] + ".html") \
-                                .render(context={"region": region, "genes": genes})
+                                .render(context={"region": region, "genes": gene_list})
                         else:
-                            contents = {"region": region, "genes": genes}
+                            contents = {"region": region, "genes": gene_list}
 
                 except KeyError:
                     contents = read_html_file("error.html") \
-                        .render(context={"error": "Chromosome not found"})
+                        .render(context={"error": "Region not found"})
 
         except KeyError:
             contents = read_html_file("error.html") \
