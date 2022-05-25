@@ -14,6 +14,10 @@ PORT = 8080
 # -- This is for preventing the error: "Port already in use"
 socketserver.TCPServer.allow_reuse_address = True
 
+SERVER = 'rest.ensembl.org'
+conn = http.client.HTTPConnection(SERVER)
+
+PARAMS = "?content-type=application/json"
 
 # Class with our Handler. It is a called derived from BaseHTTPRequestHandler
 # It means that our class inheritates all his methods and properties
@@ -36,16 +40,16 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             t.cprint(cmd_dict, "blue")
 
             if path == "/":
-                contents = Path("./html/index.html").read_text()
+                filename = "index.html"
+                contents = {}
 
             elif path == "/favicon.ico":
-                contents = Path("./html/index.html").read_text()
-
+                filename = "index.html"
+                contents = {}
             elif path == "/list":
                 try:
                     ENDPOINT = "/info/species"
-                    PARAMS = "?content-type=application/json"
-                    species_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
+                    species_dict = commands.make_server_request(conn, ENDPOINT, PARAMS)
                     species = []
 
                     if cmd_dict != {}:
@@ -56,24 +60,23 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                     if limit > len(species_dict["species"]) or 0 > limit:
                         contents = {"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))}
-                        contents = commands.create_response("error.html", contents, cmd_dict)
+                        filename = "error.html"
 
                     else:
                         for n in range(0, int(limit)):
                             species.append(species_dict["species"][n]["name"])
 
                         contents = {"length": str(len(species_dict["species"])), "limit": limit, "species": species}
-                        contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
+                        filename = path[1:] + ".html"
 
                 except ValueError:
                     contents = {"error": "Please, enter a valid value for the limit, between 0 and " + str(len(species_dict["species"]))}
-                    contents = commands.create_response("error.html", contents, cmd_dict)
+                    filename = "error.html"
 
             elif path == "/karyotype":
                 ENDPOINT = "/info/assembly/" + cmd_dict["species"][0].strip().replace(" ", "_")
-                PARAMS = "?content-type=application/json"
 
-                karyotype_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
+                karyotype_dict = commands.make_server_request(conn, ENDPOINT, PARAMS)
 
                 try:
                     chromosomes = []
@@ -82,21 +85,20 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                     if chromosomes == []:
                         contents = {"karyotype": "Karyotype for this species was empty"}
-                        contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
+                        filename = path[1:] + ".html"
 
                     else:
                         contents = {"Species": cmd_dict["species"][0], "karyotype": chromosomes}
-                        contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
+                        filename = path[1:] + ".html"
 
                 except KeyError:
                     contents = {"error": "Species not found"}
-                    contents = commands.create_response("error.html", contents, cmd_dict)
+                    filename = "error.html"
 
             elif path == "/chromosome":
                 ENDPOINT = "/info/assembly/" + cmd_dict["species"][0].strip().replace(" ", "_")
-                PARAMS = "?content-type=application/json"
 
-                species_dict = commands.make_ensembl_request(ENDPOINT, PARAMS)
+                species_dict = commands.make_server_request(conn, ENDPOINT, PARAMS)
                 try:
                     chromosome_dict_list = species_dict["top_level_region"]
                     correct = False
@@ -111,69 +113,63 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                         i += 1
 
-                    print(chromosome)
-                    print(correct)
-
                     if correct:
                         contents = {"chromosome": chromosome["name"], "length": chromosome["length"]}
-                        contents = commands.create_response(path[1:] +".html", contents, cmd_dict)
+                        filename = path[1:] + ".html"
 
                     else:
                         contents = {"error": "Chromosome " + chosen_chromosome + " not found"}
-                        contents = commands.create_response("error.html", contents, cmd_dict)
+                        filename = "error.html"
 
                 except IndexError:
                     contents = {"error": "Chromosome " + chosen_chromosome + " not found"}
-                    contents = commands.create_response("error.html", contents, cmd_dict)
+                    filename = "error.html"
                 except KeyError:
                     contents = {"error": "Karyotype for " + cmd_dict["species"][0] + " not found"}
-                    contents = commands.create_response("error.html", contents, cmd_dict)
+                    filename = "error.html"
 
             elif path == "/geneseq":
                 try:
                     ENDPOINT = "/sequence/id/"
-                    PARAMS = "?content-type=application/json"
                     wanted_gene = cmd_dict["identifier"][0]
 
-                    gene_dict = commands.make_ensembl_request(ENDPOINT + wanted_gene, PARAMS)
+                    gene_dict = commands.make_server_request(conn, ENDPOINT + wanted_gene, PARAMS)
 
                     seq = Seq(gene_dict["seq"])
 
                     if seq.valid_sequence():
                         contents = {"seq": str(seq), "gene": wanted_gene}
-                        contents = commands.create_response("geneseq.html", contents, cmd_dict)
+                        filename = path[1:] + ".html"
 
                     else:
                         contents = {"error":"Incorrect sequence, please enter a correct sequence"}
-                        contents = commands.create_response("error.html", contents, cmd_dict)
+                        filename = "error.html"
 
                 except KeyError:
                     contents = {"error": "Gene with identifier " + wanted_gene + " not found"}
-                    contents = commands.create_response("error.html", contents, cmd_dict)
+                    filename = "error.html"
 
             elif path == "/genecalc":
                 try:
                     ENDPOINT = "/sequence/id/"
-                    PARAMS = "?content-type=application/json"
                     wanted_gene = cmd_dict["identifier"][0]
 
-                    gene_dict = commands.make_ensembl_request(ENDPOINT + wanted_gene, PARAMS)
+                    gene_dict = commands.make_server_request(conn, ENDPOINT + wanted_gene, PARAMS)
                     seq = Seq(gene_dict["seq"])
 
                     percentages = seq.base_percentage()
                     seq_len = seq.len()
 
                     contents = {"seq": str(seq), "length": seq_len, "percentages": percentages}
-                    contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
+                    filename = path[1:] + ".html"
 
                 except KeyError:
                     contents = {"error": "Gene with identifier " + wanted_gene + " not found"}
-                    contents = commands.create_response("error.html", contents, cmd_dict)
+                    filename = "error.html"
 
             elif path == "/genelist":
                 try:
                     ENDPOINT = "/phenotype/region/homo_sapiens/"
-                    PARAMS = "?content-type=application/json"
 
                     chromosome = cmd_dict["chromosome"][0]
                     startpoint = cmd_dict["startpoint"][0]
@@ -181,7 +177,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                     region = chromosome + ":" + startpoint + "-" + endpoint
 
-                    region_dict = commands.make_ensembl_request(ENDPOINT + region, PARAMS)
+                    region_dict = commands.make_server_request(conn, ENDPOINT + region, PARAMS)
 
                     gene_list = []
 
@@ -196,22 +192,25 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                     if gene_list == []:
                         contents = {"error": "No genes found in region " + region}
-                        contents = commands.create_response("error.html", contents, cmd_dict)
+                        filename = "error.html"
                     else:
                         contents = {"region": region, "genes": gene_list}
-                        contents = commands.create_response(path[1:] + ".html", contents, cmd_dict)
+                        filename = path[1:] + ".html"
 
                 except KeyError:
                     contents = {"error": "Region not found"}
-                    contents = commands.create_response("error.html", contents, cmd_dict)
+                    filename = "error.html"
+            else:
+                contents = {"error": "Page not found"}
+                filename = "error.html"
 
         except KeyError:
             contents = {"error": "Please enter a valid argument"}
-            contents = commands.create_response("error.html", contents, cmd_dict)
+            filename = "error.html"
 
         except http.client.InvalidURL:
             contents = {"error": "Please enter a valid statement"}
-            contents = commands.create_response("error.html", contents, cmd_dict)
+            filename = "error.html"
 
         try:
             # Generating the response message
@@ -219,7 +218,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
             # Define the content-type header:
             if not "json" in cmd_dict:
+                contents = commands.read_html_file(filename) \
+                    .render(context=contents)
+
                 self.send_header('Content-Type', 'text/html')
+
             else:
                 contents = json.dumps(contents)
                 self.send_header('Content-Type', 'application/json')
@@ -228,7 +231,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         except UnboundLocalError:
             contents = {"error": "Page not found"}
-            contents = commands.create_response("error.html", contents, cmd_dict)
+            contents = commands.read_html_file("error.html") \
+                .render(context=contents)
 
             self.send_header('Content-Type', 'text/html')
             self.send_header('Content-Length', len(str.encode(contents)))

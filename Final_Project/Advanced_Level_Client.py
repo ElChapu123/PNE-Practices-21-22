@@ -1,13 +1,13 @@
-from server_class import Client
 import commands
 import termcolor as t
-
+import http
 
 IP = "127.0.0.1"
 PORT = 8080
 
-c = Client(IP, PORT)
-print(c)
+SERVER = "127.0.0.1:8080"
+
+conn = http.client.HTTPConnection(SERVER)
 
 command_list = ["/list", "/karyotype", "/chromosome", "/geneseq", "/genecalc", "/genelist"]
 
@@ -19,14 +19,10 @@ for cmd in command_list:
 
         params = "?" + "limit=" + limit + "&json=on"
 
-        response = commands.make_server_request(cmd, params)
-
     elif cmd == "/karyotype":
         species = input("Enter a species: ")
 
         params = "?" + "species=" + species + "&json=on"
-
-        response = commands.make_server_request(cmd, params)
 
     elif cmd == "/chromosome":
         species = input("Enter a species: ")
@@ -34,21 +30,15 @@ for cmd in command_list:
 
         params = "?" + "species=" + species + "&chromosome=" + chromosome + "&json=on"
 
-        response = commands.make_server_request(cmd, params)
-
     elif cmd == "/geneseq":
         identifier = input("Enter a gene identifier: ")
 
         params = "?" + "identifier=" + identifier + "&json=on"
 
-        response = commands.make_server_request(cmd, params)
-
     elif cmd == "/genecalc":
         identifier = input("Enter a gene identifier: ")
 
         params = "?" + "identifier=" + identifier + "&json=on"
-
-        response = commands.make_server_request(cmd, params)
 
     elif cmd == "/genelist":
         chromosome = input("Enter a chromosome: ")
@@ -57,9 +47,7 @@ for cmd in command_list:
 
         params = "?" + "chromosome=" + chromosome + "&startpoint=" + startpoint + "&endpoint=" + endpoint +"&json=on"
 
-        response = commands.make_server_request(cmd, params)
-
-    print()
+    response = commands.make_server_request(conn, cmd, params)
 
     for e in response:
         t.cprint(e + ": ", "blue", end="")
@@ -73,3 +61,4 @@ for cmd in command_list:
                 t.cprint(v, "white")
         else:
             t.cprint(str(response[e]), "white")
+    print()
