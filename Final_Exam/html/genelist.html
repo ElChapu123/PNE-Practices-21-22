@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KARYOTYPE</title>
+</head>
+<body style="background-color: lightblue">
+<h1>Genes in {{context.region}}</h1>
+The genes in your region are:
+{%for e in context.genes%}
+    <ul><li>{{e}}</li></ul>
+{%endfor%}
+<br>
+
+<p> </p>
+<a href="/">Main page</a>
+</body>
+</html>

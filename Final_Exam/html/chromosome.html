@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CHROMOSOME</title>
+</head>
+<body style="background-color: lightblue">
+<h1>Chromosome</h1>
+The length selected is: {{context.min_length}}
+<br>
+The {{context.species}} chromosomes with a length higher than the selected one are:
+<p></p>
+{%for e in context.chromosomes%}
+    <ul><li>{{e}}</li></ul>
+{%endfor%}
+<br>
+
+<p> </p>
+<a href="/">Main page</a>
+</body>
+</html>

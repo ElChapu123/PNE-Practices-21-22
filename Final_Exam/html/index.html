@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>FORM 2</title>
+  </head>
+
+
+  <body style="background-color: lightsteelblue">
+    <h1>Browsing Human and Vertebrates Genome</h1>
+    <h2>Basic Level Exercises</h2>
+    <hr>
+
+  <form action="/list" method="get">
+      List of species in the genome database:
+      <br>
+      Select the limit: <input type="text" name="limit">
+      <br>
+      <br>
+      Obtain json:
+      <input type="checkbox" name=json>
+      <br>
+      <input type="submit" value="SEND">
+    </form>
+
+    <hr>
+
+ <form action="/karyotype" method="get">
+      Information about the karyotype:
+      <br>
+      Select the species: <input type="text" name="species">
+     <br>
+     <br>
+      Obtain json:
+      <input type="checkbox" name=json>
+      <br>
+      <input type="submit" value="SEND">
+
+    </form>
+
+    <hr>
+
+   <form action="/chromosome" method="get">
+        Chromosomes with length higher than chosen:
+        <br>
+        Select the species: <input type="text" name="species">
+        <br>
+        Select the length: <input type="text" name="length">
+        <br>
+       <br>
+      Obtain json:
+      <input type="checkbox" name=json>
+      <br>
+      <input type="submit" value="SEND">
+
+    </form>
+
+    <hr>
+
+ <form action="/geneseq" method="get">
+      Obtain a gene sequence:
+      <br>
+      Select the gene identifier: <input type="text" name="identifier">
+      <br>
+        If you don't know the identifier you can search it <a href="http://www.ensembl.org/index.html" target="_blank">here</a>
+     <br>
+     <br>
+       Obtain json:
+      <input type="checkbox" name=json>
+      <br>
+      <input type="submit" value="SEND">
+    </form>
+
+    <hr>
+
+   <form action="/genecalc" method="get">
+      Obtain a gene sequence's characteristics:
+      <br>
+      Select the gene identifier: <input type="text" name="identifier">
+      <br>
+        If you don't know the identifier you can search it <a href="http://www.ensembl.org/index.html" target="_blank">here</a>
+     <br>
+   <br>
+
+       Obtain json:
+      <input type="checkbox" name=json>
+     <br>
+      <input type="submit" value="SEND">
+
+    </form>
+
+  <hr>
+
+   <form action="/genelist" method="get">
+        Information about the karyotype:
+        <br>
+        Select the chromosome: <input type="text" name="chromosome">
+        <br>
+        Select the start point: <input type="text" name="startpoint">
+        Select the end point: <input type="text" name="endpoint">
+        <br><br>
+        Obtain json:
+      <input type="checkbox" name=json>
+        <br>
+      <input type="submit" value="SEND">
+    </form>
+
+  </body>
+</html>

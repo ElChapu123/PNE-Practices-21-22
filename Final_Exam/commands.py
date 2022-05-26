@@ -24,3 +24,18 @@ def make_server_request(conn, ENDPOINT, PARAMS):
     data1 = json.loads(data1)
 
     return data1
+
+def format_list(my_list):
+    new_list = []
+    not_numbers = []
+
+    for e in my_list:
+        if e.isdigit():
+            new_list.append(int(e))
+        else:
+            not_numbers.append(e)
+
+    new_list = sorted(new_list)
+    new_list = new_list + not_numbers
+
+    return new_list

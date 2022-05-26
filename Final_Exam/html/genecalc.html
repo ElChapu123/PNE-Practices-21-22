@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OPERATION</title>
+</head>
+<body style="background-color: lightblue">
+<h1>Sequence:</h1>
+<textarea>{{context.seq}}</textarea>
+<p> </p>
+
+<h1>Characteristics:</h1>
+Length: {{context.length}}
+<p></p>
+Percentages:
+<p></p>
+{%for e in context.percentages%}
+    <ul><li>{{e}}: {{context.percentages[e]}}%</li></ul>
+{%endfor%}
+<p> </p>
+
+<a href="/">Main page</a>
+</body>
+</html>
